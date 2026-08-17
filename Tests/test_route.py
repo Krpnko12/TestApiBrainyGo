@@ -1,30 +1,27 @@
-from API.route_api import RouteAPI
-
-def test_create_route(create_route, logger):
-    logger.info("Запущен тест по созданию маршрута")
-    assert "route_id" in create_route
+import pytest
 
 from API.route_api import RouteAPI
 
-def test_get_routes(create_route, logger):
-    #Тест проверяет, что созданный маршрут есть в списке всех маршрутов
-    logger.info("Запущен тест на получение всех маршрутов")
+pytestmark = pytest.mark.integration
 
-    api = RouteAPI()
-    response = api.get_routes()
 
-    assert response.status_code == 200
-    routes = response.json()["routes"]
+def test_create_route(created_route, logger):
+    logger.info("Проверяем данные созданного маршрута")
+    assert created_route["route_id"] > 0
+    assert created_route["from_id"] != created_route["to_id"]
 
-    found_route = None
-    for route in routes:
-        if route["id"] == create_route["route_id"]:
-            found_route = route
-            break
 
-    assert found_route is not None, "Созданный маршрут не найден среди всех маршрутов"
-    assert found_route["from_id"] == create_route["from_id"]
-    assert found_route["to_id"] == create_route["to_id"]
-    assert abs(found_route["distance"] - create_route["distance"]) < 0.01  # сравниваем с погрешностью
+def test_get_routes(created_route, logger):
+    response = RouteAPI().get_routes()
+    assert response.status_code == 200, response.text
 
-    logger.info(f"Маршрут найден: id={found_route['id']}, from={found_route['from_id']} → to={found_route['to_id']}")
+    route_id = created_route["route_id"]
+    found_route = next(
+        (route for route in response.json()["routes"] if route["id"] == route_id),
+        None,
+    )
+    assert found_route is not None, f"Маршрут id={route_id} не найден среди всех"
+    assert found_route["from_id"] == created_route["from_id"]
+    assert found_route["to_id"] == created_route["to_id"]
+    assert found_route["distance"] == pytest.approx(created_route["distance"], abs=0.01)
+    logger.info(f"Найден маршрут id={found_route['id']}")

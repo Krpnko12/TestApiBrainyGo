@@ -1,7 +1,7 @@
 from API.base_api import BaseAPI
 
-class DestinationAPI(BaseAPI):
 
+class DestinationAPI(BaseAPI):
     def add_destination(self, destination_data: dict):
         return self.post("/add_destination", destination_data)
 
