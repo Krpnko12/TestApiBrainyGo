@@ -1,7 +1,7 @@
 from API.base_api import BaseAPI
 
-class CorporationAPI(BaseAPI):
 
+class CorporationAPI(BaseAPI):
     def create_corporation(self, corporation_data: dict):
         return self.post("/create_corporation", corporation_data)
 
@@ -9,4 +9,4 @@ class CorporationAPI(BaseAPI):
         return self.delete(f"/delete_corporation/{corporation_id}")
 
     def get_corporations(self):
-        return self.get(f"/get_corporations")
+        return self.get("/get_corporations")

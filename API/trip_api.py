@@ -1,5 +1,6 @@
 from API.base_api import BaseAPI
 
+
 class TripAPI(BaseAPI):
     def add_trip(self, trip_data: dict):
         """Добавить новый рейс"""

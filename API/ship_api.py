@@ -1,5 +1,6 @@
 from API.base_api import BaseAPI
 
+
 class ShipAPI(BaseAPI):
     def add_ship(self, ship_data: dict):
         """Добавить новый корабль"""
